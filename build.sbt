@@ -28,7 +28,7 @@ lazy val root = project.in(file("."))
   .dependsOn(ace, client)
 
 def aceD(artifact: String, name: String): JSModuleID =
-  "org.webjars.bower" % "ace-builds" % "1.2.5" % "compile" / s"src/$artifact.js" minified s"src-min/$artifact.js" commonJSName name
+  "org.webjars.bower" % "ace-builds" % "1.2.5" % "compile" / s"src-noconflict/$artifact.js" minified s"src-min-noconflict/$artifact.js" commonJSName name
 
 def react(artifact: String, name: String): JSModuleID = 
   "org.webjars.bower" % "react" % "15.2.1" % "compile" / s"$artifact.js" minified s"$artifact.min.js" commonJSName name
@@ -42,7 +42,9 @@ lazy val ace = project
     scalacOptions -= "-Ywarn-dead-code",
     jsDependencies ++= Seq(
       aceD("ace", "Ace"),
-      aceD("mode-scala", "AceScala")
+      aceD("mode-scala", "AceScala"),
+      aceD("theme-solarized_dark", "AceSolarizedDark"),
+      aceD("theme-solarized_light", "AceSolarizedLight")
     ),
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "0.9.1"
