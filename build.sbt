@@ -1,4 +1,5 @@
 import ScalaJSHelper._
+import org.scalajs.sbtplugin.JSModuleID
 
 lazy val baseSettings = Seq(
   scalaVersion := "2.11.8",
@@ -26,19 +27,22 @@ lazy val root = project.in(file("."))
   .aggregate(ace, client)
   .dependsOn(ace, client)
 
+def aceD(artifact: String, name: String): JSModuleID =
+  "org.webjars.bower" % "ace-builds" % "1.2.5" % "compile" / s"src/$artifact.js" minified s"src-min/$artifact.js" commonJSName name
+
+def react(artifact: String, name: String): JSModuleID = 
+  "org.webjars.bower" % "react" % "15.2.1" % "compile" / s"$artifact.js" minified s"$artifact.min.js" commonJSName name
+
+def react(artifact: String, name: String, depends: String): JSModuleID =
+  react(artifact, name).dependsOn(s"$depends.js")
+
 lazy val ace = project
   .settings(baseSettings)
   .settings(
     scalacOptions -= "-Ywarn-dead-code",
     jsDependencies ++= Seq(
-      "org.webjars.bower" % "ace-builds" % "1.2.3" % "compile"// 1.2.5
-        / "src/ace.js"
-        minified "src-min/ace.js"
-        commonJSName "Ace",
-      "org.webjars.bower" % "ace-builds" % "1.2.3" % "compile"// 1.2.5
-        / "src/mode-scala.js"
-        minified "src-min/mode-scala.js"
-        commonJSName "AceScala"
+      aceD("ace", "Ace"),
+      aceD("mode-scala", "AceScala")
     ),
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "0.9.1"
@@ -49,21 +53,10 @@ lazy val ace = project
 lazy val client = project
   .settings(baseSettings)
   .settings(
-    jsDependencies ++= Seq( 
-     "org.webjars.bower" % "react" % "15.2.1" % "compile" 
-        / "react-with-addons.js"
-        minified "react-with-addons.min.js"
-        commonJSName "React",
-      "org.webjars.bower" % "react" % "15.2.1" % "compile"
-        /         "react-dom.js"
-        minified  "react-dom.min.js"
-        dependsOn "react-with-addons.js"
-        commonJSName "ReactDOM",
-      "org.webjars.bower" % "react" % "15.2.1" % "compile"
-        /         "react-dom-server.js"
-        minified  "react-dom-server.min.js"
-        dependsOn "react-dom.js"
-        commonJSName "ReactDOMServer"
+    jsDependencies ++= Seq(
+      react("react-with-addons", "React"),
+      react("react-dom", "ReactDOM", "react-with-addons"),
+      react("react-dom-server", "ReactDOMServer", "react-dom")
     ),
     libraryDependencies ++= Seq(
       "com.github.japgolly.scalacss"      %%% "core"      % "0.4.1",
