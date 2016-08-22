@@ -58,7 +58,7 @@ object GlobalStyle extends StyleSheet.Standalone {
     padding(24.px)
   )
 
-  "::-webkit-scrollbar" - (
+  ".ace_editor ::-webkit-scrollbar" - (
     height(12.px),
     width(12.px)
   )
@@ -97,7 +97,10 @@ object AppCSS {
     dom.document.head.appendChild(style)
 
     import scalacss.ScalaCssReact._
-    GlobalRegistry.register(EditorView.Style)
+    GlobalRegistry.register(
+      App.Style,
+      AceEditor.Style
+    )
     GlobalRegistry.onRegistration(_.addToDocument())
   }
 }
@@ -110,7 +113,7 @@ object Client extends JSApp {
     import dsl._
 
     ( trimSlashes
-        | staticRoute(root, Home) ~> render(EditorView())
+        | staticRoute(root, Home) ~> render(App())
     ) 
       .notFound(redirectToPage(Home)(Redirect.Replace))
       .renderWith(layout)

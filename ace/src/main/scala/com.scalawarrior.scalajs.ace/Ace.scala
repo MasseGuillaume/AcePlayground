@@ -170,7 +170,7 @@ trait IEditSession extends js.Object {
   var selection: Selection
   var bgTokenizer: BackgroundTokenizer
   var doc: Document
-  def on(event: String, fn: js.Function1[js.Any, Any]): js.Dynamic
+  def on(event: String, fn: js.Function1[js.Any, js.Any]): js.Dynamic
   def findMatchingBracket(position: Position): js.Dynamic
   def addFold(text: String, range: Range): js.Dynamic
   def getFoldAt(row: Double, column: Double): js.Dynamic
